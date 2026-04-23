@@ -3,16 +3,17 @@ import type { Quote } from '../types/quote'
 import { quotes as initialQuotes } from '../data/quotes'
 import Button from '../components/Button'
 import Card from '../components/Card'
-import List from '../components/List'
 
 export default function QuotesPage() {
   const [quotes, setQuotes] = useState<Quote[]>(initialQuotes)
+  const [activeQuote, seetActiveQuote] = useState<Quote | null>(null)
   const [showInput, setShowInput] = useState<boolean>(false)
   const [newQuote, setNewQuote] = useState<string>('')
 
-  const shuffleQuotes = () => {
-    const shuffle = [...quotes].sort(() => Math.random() - 0.5)
-    setQuotes(shuffle);
+  const showRandomQuote = () => {
+    if(!quotes.length)return;
+    const randomIndex = Math.floor(Math.random() * quotes.length)
+    seetActiveQuote(quotes[randomIndex])
   }
 
   const addNewQuotes = () => {
@@ -22,6 +23,7 @@ export default function QuotesPage() {
       quote: newQuote
     };
     setQuotes((prev) =>[quote, ...prev]);
+    seetActiveQuote(quote)
     setNewQuote('')
     setShowInput(false)
   }
@@ -30,7 +32,7 @@ export default function QuotesPage() {
   return (
     <div>
       <div>
-        <Button onClick={shuffleQuotes}>Shuffle</Button>
+        <Button onClick={showRandomQuote}>Show Quote of the Day</Button>
         <Button onClick={()=>setShowInput(true)}>Add Quotes</Button>
       </div>
       {showInput && (
@@ -43,13 +45,13 @@ export default function QuotesPage() {
           <Button onClick={addNewQuotes}>Save</Button>
         </div>
       )}
-      <List<Quote> items={quotes} renderItem={(quote) => (
-        <li key={quote.id}>
-          <Card>
-            {quote.quote}
-          </Card>
-        </li>
-      )}/>
+      {activeQuote ?
+        <Card>{activeQuote.quote}</Card>
+        :
+        <p>
+          No quotes yet. Add one to get started!
+        </p>
+      }
     </div>
   )
 }
