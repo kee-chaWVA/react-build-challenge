@@ -6,7 +6,8 @@ import List from '../components/List';
 import Card from '../components/Card';
 
 export default function SearchPage() {
-  const [ movies, setMovies] = useState<Movie[]>(initialMovies)
+   const movies = initialMovies;
+  // const [ movies, setMovies] = useState<Movie[]>(initialMovies)
   const [ searchWord, setSearchWord ] = useState<string>('');
   const [ committedSearch, setCommittedSearch ] = useState<string>('')
 
@@ -33,33 +34,14 @@ export default function SearchPage() {
             items={results}
             renderItem={(movie) => {
               return(
-                <li key={movie.id}>
+                <li key={movie.id}>     
                   <Card>
-                    <span>
-                      <strong>
-                        Title: 
-                      </strong>
-                      {movie.title}
-                    </span>
-                    <span>
-                      <strong>
-                        Released:
-                      </strong>
-                      {movie.releaseYear}
-                    </span>
-                    <span>
-                      <strong>
-                        Actor:
-                      </strong>
-                      {movie.actor}
-                    </span>
-                    <span>
-                      <strong>
-                        Director:
-                      </strong>
-                      {movie.director}
-                    </span>
+                    <strong>{movie.title}</strong>
+                    <p>Released: {movie.releaseYear}</p>
+                    <p>Actor: {movie.actor}</p>
+                    <p>Director: {movie.director}</p>
                   </Card>
+                  <br/>
                 </li>
               )
             }}
