@@ -45,21 +45,21 @@ export default function SearchPage() {
     <>
       <header>
         {error &&
-          <p id='movieSearchError'>
+          <p id='movie-search-error'>
             {error}
           </p>}
         <label
-          htmlFor='movieSearchBar'
+          htmlFor='movie-search-bar'
           className='hidden'
         >
           Search Movie
         </label>
         <input
-          id='movieSearchBar'
+          id='movie-search-bar'
           type='search'
           value={searchWord}
           onChange={handleChange}
-          aria-describedby={error ? 'movieSearchError' : undefined}
+          aria-describedby={error ? 'movie-search-error' : undefined}
           aria-invalid={Boolean(error)}
         />
         <Button onClick={handleSearch}>Search Movie</Button>
@@ -88,6 +88,7 @@ export default function SearchPage() {
         { committedSearch && (
           results.length > 0 ? (
             <List<Movie> 
+              className='search-results'
               items={results}
               renderItem={(movie) => {
                 return(
