@@ -4,5 +4,9 @@ import SearchPage from './pages/SearchPage'
 
 export default function App() {
   // return <QuotesPage/>
-  return <SearchPage/>
+  return (
+    <div className='app'>
+      <SearchPage/>
+    </div>
+  )
 }

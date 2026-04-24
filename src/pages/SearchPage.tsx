@@ -5,10 +5,11 @@ import Button from '../components/Button';
 import List from '../components/List';
 import Card from '../components/Card';
 import Fuse, { type FuseResult } from 'fuse.js';
+import '../SearchPage.css'
 
 const fuse = new Fuse(
   movies, {
-    keys: ['title', 'actor', 'director'],
+    keys: ['title'],
     threshold: 0.35
   }
 )
@@ -21,7 +22,7 @@ export default function SearchPage() {
 
   const handleSearch = () => {
     if(!searchWord.trim()) {
-      setError('You must enter a movie title, actor name, or director name.' )
+      setError('You must enter a movie title.' )
       return;
     }
     setCommittedSearch(searchWord)
@@ -41,21 +42,31 @@ export default function SearchPage() {
   })
 
   return(
-    <div>
-      <div>
-        {error && <p>{error}</p>}
-      </div>
-      <div>
+    <>
+      <header>
+        {error &&
+          <p id='movieSearchError'>
+            {error}
+          </p>}
+        <label
+          htmlFor='movieSearchBar'
+          className='hidden'
+        >
+          Search Movie
+        </label>
         <input
-          type='text'
+          id='movieSearchBar'
+          type='search'
           value={searchWord}
           onChange={handleChange}
+          aria-describedby={error ? 'movieSearchError' : undefined}
+          aria-invalid={Boolean(error)}
         />
         <Button onClick={handleSearch}>Search Movie</Button>
-      </div>
-      {searchWord.trim() && (
-        suggestions.length > 0 ? (
-          <div>
+      </header>
+      <section>
+        {searchWord.trim() && (
+          suggestions.length > 0 ? (
             <List<Movie>
               items={movieFromFuse}
               renderItem={(movie) =>{
@@ -66,38 +77,38 @@ export default function SearchPage() {
                 )}
               }
             />
-          </div>
-        ) : (
-          <div>
+          ) : (
             <p>
               No matching movies
             </p>
-          </div>
-        )
-      )}
-      { committedSearch && (
-        results.length > 0 ? (
-          <List<Movie> 
-            items={results}
-            renderItem={(movie) => {
-              return(
-                <li key={movie.id}>     
-                  <Card>
-                    <strong>{movie.title}</strong>
-                    <p>Released: {movie.releaseYear}</p>
-                    <p>Actor: {movie.actor}</p>
-                    <p>Director: {movie.director}</p>
-                  </Card>
-                  <br/>
-                </li>
-              )
-            }}
-          />
-          ) : (
-        <p>No Movies Found</p>
           )
-        )
-      }
-    </div>
+        )}
+      </section>
+      <section>
+        { committedSearch && (
+          results.length > 0 ? (
+            <List<Movie> 
+              items={results}
+              renderItem={(movie) => {
+                return(
+                  <li key={movie.id}>     
+                    <Card>
+                      <strong>{movie.title}</strong>
+                      <p>Released: {movie.releaseYear}</p>
+                      <p>Actor: {movie.actor}</p>
+                      <p>Director: {movie.director}</p>
+                    </Card>
+                    <br/>
+                  </li>
+                )
+              }}
+            />
+            ) : (
+          <p>No Movies Found</p>
+            )
+          )
+        }
+      </section>
+    </>
   )
 }
