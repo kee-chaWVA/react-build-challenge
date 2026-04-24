@@ -1,9 +1,36 @@
-.hidden {
-  display: none;
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .search-results {
   display: block;
+  margin-block-start: 2rem;
+}
+
+.search-results, .search-suggestions {
+  list-style-type: none;
+  padding-inline-start: 1rem;
+  padding-inline-end: 1rem;
+}
+
+.search-suggestions .active {
+  background-color: lightgray;
+}
+
+.search-suggestions .active p {
+  filter: brightness(.15);
+}
+
+.search-suggestions li:hover {
+  background-color: lightgray;
 }
 
 @media (min-width: 1024px) {

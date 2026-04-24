@@ -3,7 +3,7 @@ import type { ComponentPropsWithoutRef } from 'react'
 
 type ListProps<T> = {
   items: T[]
-  renderItem: (item: T) => ReactNode
+  renderItem: (item: T, index: number) => ReactNode
 } & ComponentPropsWithoutRef<'ul'>
 
 export default function List<T>({ items, renderItem, className, ...rest  }: ListProps<T>) {

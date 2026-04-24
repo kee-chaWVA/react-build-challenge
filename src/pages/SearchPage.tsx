@@ -18,20 +18,62 @@ export default function SearchPage() {
   const [ searchWord, setSearchWord ] = useState<string>('');
   const [ committedSearch, setCommittedSearch ] = useState<string>('')
   const [ error, setError ] = useState<string>('')
+  const [ activeSuggestion, setActiveSuggestion ] = useState<number>(-1)
 
 
-  const handleSearch = () => {
-    if(!searchWord.trim()) {
+  const handleSearch = (value?: string) => {
+    const finalValue = value ?? searchWord;
+    if(!finalValue.trim()) {
       setError('You must enter a movie title.' )
       return;
     }
-    setCommittedSearch(searchWord)
+    setCommittedSearch(finalValue)
     setError('')
+    setSearchWord('')
+    setActiveSuggestion(-1)
   }
 
-  const handleChange = (e) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+    
+      if (activeSuggestion >= 0) {
+        handleSearch(movieFromFuse[activeSuggestion].title);
+        return;
+      }
+    
+      handleSearch();
+    }
+    
+
+    if(e.key === 'ArrowDown') {
+      e.preventDefault()
+      if (movieFromFuse.length === 0) return
+      setActiveSuggestion((prev) => {
+        const nextIndex = prev < movieFromFuse.length - 1 ? prev + 1 : 0
+        return nextIndex
+      })
+    };
+
+    if(e.key === 'ArrowUp') {
+      e.preventDefault()
+      setActiveSuggestion((prev) => {
+        if (prev === -1) {
+          return movieFromFuse.length - 1
+        }
+        
+        if (prev > 0) {
+          return prev - 1
+        }
+        return movieFromFuse.length - 1
+      });
+    }
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError('')
-    setSearchWord(e.target.value)
+    setActiveSuggestion(-1)
+    setSearchWord(e.currentTarget.value)
   }
 
   const suggestions = fuse.search(searchWord)
@@ -41,26 +83,42 @@ export default function SearchPage() {
     return movie.title.toLowerCase().includes(committedSearch.toLowerCase().trim())
   })
 
+  const inputValue =
+    activeSuggestion >= 0
+      ? movieFromFuse[activeSuggestion].title
+      : searchWord;
+  
   return(
     <>
       <header>
         {error &&
-          <p id='movie-search-error'>
+          <p 
+            id='movie-search-error'
+            aria-live="assertive"
+          >
             {error}
           </p>}
         <label
           htmlFor='movie-search-bar'
-          className='hidden'
+          className='visually-hidden'
         >
           Search Movie
         </label>
         <input
           id='movie-search-bar'
           type='search'
-          value={searchWord}
+          value={inputValue}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
           aria-describedby={error ? 'movie-search-error' : undefined}
           aria-invalid={Boolean(error)}
+          aria-activedescendant={
+            activeSuggestion >= 0
+              ? `movie-option-${movieFromFuse[activeSuggestion].id}`
+              : undefined
+          }
+          aria-controls='movie-suggestion-list'
+          aria-expanded={suggestions.length > 0}
         />
         <Button onClick={handleSearch}>Search Movie</Button>
       </header>
@@ -68,17 +126,30 @@ export default function SearchPage() {
         {searchWord.trim() && (
           suggestions.length > 0 ? (
             <List<Movie>
+              id='movie-suggestion-list'
+              className='search-suggestions'
+              role='listbox'
               items={movieFromFuse}
-              renderItem={(movie) =>{
+              renderItem={(movie, index) =>{
+                const isActive = index === activeSuggestion
                 return (
-                  <li key={movie.id}>
-                    <p>{movie.title}</p>
+                  <li
+                    id={`movie-option-${movie.id}`}
+                    key={movie.id}
+                    className={isActive ? 'active' : undefined}
+                    role='option'
+                    aria-selected={isActive ? true : false}
+                    onMouseDown={() => handleSearch(movie.title)}
+                    >
+                      <p>{movie.title}</p>
                   </li>
                 )}
               }
             />
           ) : (
-            <p>
+            <p
+              aria-live="polite"
+            >
               No matching movies
             </p>
           )
@@ -105,7 +176,11 @@ export default function SearchPage() {
               }}
             />
             ) : (
-          <p>No Movies Found</p>
+          <p
+            aria-live="polite"
+          >
+            No Movies Found
+          </p>
             )
           )
         }
