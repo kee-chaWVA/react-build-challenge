@@ -6,6 +6,8 @@ import './App.css'
 import NotFoundPage from './pages/NotFound'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
+import AboutPage from './pages/AboutPage'
+import ContactUsPage from './pages/ContactUsPage'
 import ProtectedLayout from './routes/ProtectedLayout'
 
 export default function App() {
@@ -13,7 +15,9 @@ export default function App() {
     <div className='app'>
       <Navbar/>
       <Routes>
-        <Route path='/' element={<HomePage/>} />
+        <Route path='/' element={<HomePage/>}/>
+        <Route path='/about' element={<AboutPage/>}/>
+        <Route path='/contact-us' element={<ContactUsPage/>}/>
         <Route path='/login' element={<LoginPage/>}/>
         <Route element={<ProtectedLayout/>}>
           <Route path='/search' element={<SearchPage/>}/>
