@@ -9,6 +9,7 @@ import LoginPage from './pages/LoginPage'
 import AboutPage from './pages/AboutPage'
 import ContactUsPage from './pages/ContactUsPage'
 import ProtectedLayout from './routes/ProtectedLayout'
+import PokemonPage from './pages/PokemonPage'
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
         <Route path='/contact-us' element={<ContactUsPage/>}/>
         <Route path='/login' element={<LoginPage/>}/>
         <Route element={<ProtectedLayout/>}>
+          <Route path='/pokemon' element={<PokemonPage/>}/>
           <Route path='/search' element={<SearchPage/>}/>
           <Route path='/quotes' element={<QuotesPage/>}/>
           <Route path='*' element={<NotFoundPage/>}/>

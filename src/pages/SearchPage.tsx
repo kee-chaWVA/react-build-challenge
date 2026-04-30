@@ -4,8 +4,9 @@ import { movies } from '../data/movies';
 import Button from '../components/Button';
 import List from '../components/List';
 import Card from '../components/Card';
-import Fuse, { type FuseResult } from 'fuse.js';
+import Fuse from 'fuse.js';
 import '../SearchPage.css'
+import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
 
 const fuse = new Fuse(
   movies, {
@@ -19,7 +20,9 @@ export default function SearchPage() {
   const [ committedSearch, setCommittedSearch ] = useState<string>('')
   const [ error, setError ] = useState<string>('')
   const [ activeSuggestion, setActiveSuggestion ] = useState<number>(-1)
-
+  const suggestions = fuse.search(searchWord)
+  const movieFromFuse = suggestions.slice(0,5).map( (result) =>  result.item )
+  
 
   const handleSearch = (value?: string) => {
     const finalValue = value ?? searchWord;
@@ -33,51 +36,20 @@ export default function SearchPage() {
     setActiveSuggestion(-1)
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
+  const handleKeyDown = useKeyboardNavigation<Movie>({
+    items: movieFromFuse,
+    activeIndex: activeSuggestion,
+    setActiveIndex: setActiveSuggestion,
+    onSelect: (movie) => handleSearch(movie.title),
+    onEnter: () => handleSearch()
+  })
     
-      if (activeSuggestion >= 0) {
-        handleSearch(movieFromFuse[activeSuggestion].title);
-        return;
-      }
-    
-      handleSearch();
-    }
-    
-
-    if(e.key === 'ArrowDown') {
-      e.preventDefault()
-      if (movieFromFuse.length === 0) return
-      setActiveSuggestion((prev) => {
-        const nextIndex = prev < movieFromFuse.length - 1 ? prev + 1 : 0
-        return nextIndex
-      })
-    };
-
-    if(e.key === 'ArrowUp') {
-      e.preventDefault()
-      setActiveSuggestion((prev) => {
-        if (prev === -1) {
-          return movieFromFuse.length - 1
-        }
-        
-        if (prev > 0) {
-          return prev - 1
-        }
-        return movieFromFuse.length - 1
-      });
-    }
-  }
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError('')
     setActiveSuggestion(-1)
     setSearchWord(e.currentTarget.value)
+    setCommittedSearch('')
   }
-
-  const suggestions = fuse.search(searchWord)
-  const movieFromFuse = suggestions.slice(0,5).map( (result) =>  result.item )
 
   const results = movies.filter((movie) => {
     return movie.title.toLowerCase().includes(committedSearch.toLowerCase().trim())

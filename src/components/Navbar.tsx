@@ -23,6 +23,7 @@ export default function Navbar() {
       <NavItem to='/contact-us'>Contact</NavItem>
       {isAuthenticated ? (
         <>
+          <NavItem to='/pokemon'>Pokémon Encyclopedia</NavItem>
           <NavItem to='/search'>Movie Library</NavItem>
           <NavItem to='/quotes'>Quotes</NavItem>
           <Button onClick={handleLogout}>Logout</Button>
