@@ -1,0 +1,17 @@
+.card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+
+  padding: 24px;
+  box-sizing: border-box;
+
+  box-shadow: var(--shadow);
+}
+
+/* Optional: slight lift on hover (very subtle) */
+.card--interactive:hover {
+  box-shadow:
+    rgba(0, 0, 0, 0.12) 0 12px 20px -3px,
+    rgba(0, 0, 0, 0.06) 0 6px 10px -2px;
+}

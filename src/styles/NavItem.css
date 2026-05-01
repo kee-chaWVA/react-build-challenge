@@ -1,0 +1,33 @@
+/* Base nav item (NavLink) */
+.nav-item,
+.nav-item:link,
+.nav-item:visited {
+  color: var(--text-h);
+  /* remove blue/purple */
+  text-decoration: none;
+  /* remove underline */
+  font-weight: 500;
+  padding: 6px 0;
+
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Hover */
+.nav-item:hover {
+  color: var(--accent);
+  text-decoration: none;
+  /* ensure no underline on hover */
+}
+
+/* Active route */
+.nav-item.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* Keyboard accessibility */
+.nav-item:focus-visible {
+  outline: none;
+  border-bottom-color: var(--accent);
+}

@@ -1,15 +1,32 @@
-import type { ReactNode } from 'react'
+import MuiButton from "@mui/material/Button";
+import type { ButtonProps as MuiButtonProps } from "@mui/material/Button";
 
 type ButtonProps = {
-  type?: 'button' | 'submit' | 'reset'
-  children: ReactNode;
-  onClick?: () => void;
-};
+  variant?: "primary" | "secondary" | "text";
+} & Omit<MuiButtonProps, "variant" | "color">;
 
-export default function Button({ type, children, onClick }: ButtonProps) {
+function mapVariant(variant: ButtonProps["variant"]) {
+  if (variant === "text") return "text";
+  return "contained";
+}
+
+function mapColor(variant: ButtonProps["variant"]) {
+  if (variant === "secondary") return "secondary";
+  return "primary";
+}
+
+export default function Button({
+  children,
+  variant,
+  ...rest
+}: ButtonProps) {
   return (
-    <button type={type} onClick={onClick}>
+    <MuiButton
+      {...rest}
+      variant={mapVariant(variant)}
+      color={mapColor(variant)}
+    >
       {children}
-    </button>
+    </MuiButton>
   );
 }

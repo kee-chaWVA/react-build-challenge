@@ -1,0 +1,76 @@
+/* =========================================================
+   NAVBAR CONTAINER
+   ========================================================= */
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  /* allow navbar to span the container width */
+}
+
+/* =========================================================
+   LOGO
+   ========================================================= */
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: var(--heading);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-h);
+  text-decoration: none;
+  padding: 1rem 0
+}
+
+.logo-vite {
+  margin-left: 4px;
+  font-size: 30px;
+}
+
+/* Logo image + text sit side-by-side */
+.nav-logo-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  /* tighten space */
+}
+
+/* THIS stacks React and Hodgepodge */
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  /* ✅ vertical stack */
+  line-height: 1.1;
+}
+
+/* Styles */
+.logo-react {
+  color: var(--text-h);
+  font-size: 1.3rem;
+  font-weight: 500;
+}
+
+.logo-name {
+  color: var(--accent);
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.navbar-logo {
+  width: 55px;
+  height: auto;
+}
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* =========================================================

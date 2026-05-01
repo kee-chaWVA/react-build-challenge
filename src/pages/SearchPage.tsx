@@ -24,7 +24,7 @@ export default function SearchPage() {
   const movieFromFuse = suggestions.slice(0,5).map( (result) =>  result.item )
   
 
-  const handleSearch = (value?: string) => {
+  const commitSearch = (value?: string) => {
     const finalValue = value ?? searchWord;
     if(!finalValue.trim()) {
       setError('You must enter a movie title.' )
@@ -40,8 +40,8 @@ export default function SearchPage() {
     items: movieFromFuse,
     activeIndex: activeSuggestion,
     setActiveIndex: setActiveSuggestion,
-    onSelect: (movie) => handleSearch(movie.title),
-    onEnter: () => handleSearch()
+    onSelect: (movie) => commitSearch(movie.title),
+    onEnter: () => commitSearch()
   })
     
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,6 +49,11 @@ export default function SearchPage() {
     setActiveSuggestion(-1)
     setSearchWord(e.currentTarget.value)
     setCommittedSearch('')
+  }
+
+  const handleSubmit = (e: React.SubmitEvent) => {
+    e.preventDefault()
+    commitSearch(searchWord.trim())
   }
 
   const results = movies.filter((movie) => {
@@ -61,8 +66,9 @@ export default function SearchPage() {
       : searchWord;
   
   return(
-    <>
+    <main aria-labelledby="search-heading">
       <header>
+        <h1 id="search-heading">Movie Search</h1>
         {error &&
           <p 
             id='movie-search-error'
@@ -70,29 +76,33 @@ export default function SearchPage() {
           >
             {error}
           </p>}
-        <label
-          htmlFor='movie-search-bar'
-          className='visually-hidden'
-        >
-          Search Movie
-        </label>
-        <input
-          id='movie-search-bar'
-          type='search'
-          value={inputValue}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-          aria-describedby={error ? 'movie-search-error' : undefined}
-          aria-invalid={Boolean(error)}
-          aria-activedescendant={
-            activeSuggestion >= 0
-              ? `movie-option-${movieFromFuse[activeSuggestion].id}`
-              : undefined
-          }
-          aria-controls='movie-suggestion-list'
-          aria-expanded={suggestions.length > 0}
-        />
-        <Button onClick={handleSearch}>Search Movie</Button>
+        <form onSubmit={handleSubmit}>
+          <label
+            htmlFor='movie-search-bar'
+            className='visually-hidden'
+          >
+            Search Movie
+          </label>
+          <input
+            id='movie-search-bar'
+            type='search'
+            value={inputValue}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            aria-describedby={error ? 'movie-search-error' : undefined}
+            aria-invalid={Boolean(error)}
+            aria-activedescendant={
+              activeSuggestion >= 0
+                ? `movie-option-${movieFromFuse[activeSuggestion].id}`
+                : undefined
+            }
+            aria-controls='movie-suggestion-list'
+            aria-expanded={searchWord.trim().length > 0 && suggestions.length > 0}
+            role="combobox"
+            aria-autocomplete="list"
+          />
+          <Button type='submit'>Search Movie</Button>
+        </form>
       </header>
       <section>
         {searchWord.trim() && (
@@ -111,7 +121,7 @@ export default function SearchPage() {
                     className={isActive ? 'active' : undefined}
                     role='option'
                     aria-selected={isActive ? true : false}
-                    onMouseDown={() => handleSearch(movie.title)}
+                    onMouseDown={() => commitSearch(movie.title)}
                     >
                       <p>{movie.title}</p>
                   </li>
@@ -157,6 +167,6 @@ export default function SearchPage() {
           )
         }
       </section>
-    </>
+    </main>
   )
 }
