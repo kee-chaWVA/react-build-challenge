@@ -1,69 +1,60 @@
 /* =========================================================
-   NAVBAR CONTAINER
+   NAVBAR LAYOUT
    ========================================================= */
 
 .navbar {
+  max-width: 1200px;
+  margin: 0 auto;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex: 1;
-  /* allow navbar to span the container width */
-}
+  position: relative; }
 
 /* =========================================================
-   LOGO
+   LOGO & BRANDING (STRUCTURE ONLY)
    ========================================================= */
 
+.nav-logo-container {
+  display: flex;
+  align-items: center;
+}
+
+/* Structural wrapper only — color & font from theme */
 .logo {
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  font-family: var(--heading);
-  font-size: 28px;
-  font-weight: 600;
-  color: var(--text-h);
   text-decoration: none;
-  padding: 1rem 0
+  padding: 1rem 0;
 }
 
-.logo-vite {
-  margin-left: 4px;
-  font-size: 30px;
-}
-
-/* Logo image + text sit side-by-side */
-.nav-logo-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  /* tighten space */
-}
-
-/* THIS stacks React and Hodgepodge */
+/* Stack React / Hodgepodge */
 .logo-text {
   display: flex;
   flex-direction: column;
-  /* ✅ vertical stack */
-  line-height: 1.1;
+  line-height: 1.05;
 }
 
-/* Styles */
 .logo-react {
-  color: var(--text-h);
-  font-size: 1.3rem;
-  font-weight: 500;
+  font-size: 1.5rem;
+  font-weight: 600;
 }
 
 .logo-name {
-  color: var(--accent);
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   font-weight: 700;
 }
 
 .navbar-logo {
-  width: 55px;
+  width: 70px;
   height: auto;
 }
+
+/* =========================================================
+   NAV LINKS LAYOUT
+   ========================================================= */
+
 .navbar-links {
   display: flex;
   align-items: center;
@@ -74,3 +65,28 @@
 }
 
 /* =========================================================
+   SHARED NAV INDICATOR
+   ========================================================= */
+
+.nav-indicator {
+  position: absolute;
+  bottom: 25px;
+  height: 1.5px;
+
+  /* theme-owned via MUI CSS variables */
+  background-color: var(--mui-palette-primary-main);
+
+  transition:
+    transform 250ms cubic-bezier(0.4, 0, 0.2, 1),
+    width 250ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 150ms ease;
+
+  opacity: 0;
+  will-change: transform, width;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-indicator {
+    transition: none !important;
+  }
+}

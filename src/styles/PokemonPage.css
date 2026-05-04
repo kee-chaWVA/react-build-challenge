@@ -1,0 +1,10 @@
+.pokemon-page {
+  min-height: 100%;
+  background-color: var(--mui-palette-background-default);
+  color: var(--mui-palette-text-primary);
+  padding-bottom: 32px;
+}
+
+.pokemon-header {
+  text-align: center;
+}

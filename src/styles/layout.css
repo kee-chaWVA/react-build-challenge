@@ -14,7 +14,6 @@
 
 .site-header {
   width: 100%;
-  background: var(--bg);
   border-bottom: 1px solid var(--border);
 }
 
@@ -45,31 +44,4 @@
   max-width: 1200px;
   padding: 32px 24px;
   box-sizing: border-box;
-}
-
-/* =========================================================
-   PAGE TITLES
-   ========================================================= */
-
-/* Center and bold all page headers */
-.content-container h1,
-.content-container h2 {
-  text-align: center;
-  font-weight: 700;
-}
-
-/* Optional spacing under main page title */
-.content-container h1 {
-  margin-bottom: 32px;
-}
-
-/* =========================================================
-   OPTIONAL BODY CENTERING
-   ========================================================= */
-
-.login-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 80vh;
 }

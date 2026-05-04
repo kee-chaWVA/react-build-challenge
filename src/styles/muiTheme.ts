@@ -1,18 +1,64 @@
 import { createTheme } from "@mui/material/styles";
 
 export const muiTheme = createTheme({
-  /* =========================================================
-     PALETTE (COLORS)
-     ========================================================= */
-  palette: {
-    mode: "light", // keep light for now
-    primary: {
-      main: "#aa3bff", // matches your --accent
+  
+  cssVariables: {
+    // Use class on <html> so you can toggle: .light / .dark
+    colorSchemeSelector: "class",
+  },
+  
+  colorSchemes: {
+    light: {
+      palette: {
+        primary: { main: "#aa3bff" },
+        secondary: { main: "#6b6375" },
+
+        // Stronger text for readability (fixes “too light” titles)
+        text: {
+          primary: "rgba(0,0,0,0.88)",
+          secondary: "rgba(0,0,0,0.72)",
+        },
+        
+        background: {
+          default: "#f4f5f8",
+          paper: "#ffffff",
+        },
+    
+
+        error: {
+          main: "#d32f2f",
+          light: "#fdecea",
+          dark: "#9a0007",
+        },
+      },
     },
-    secondary: {
-      main: "#6b6375",
+
+    dark: {
+      palette: {
+        primary: { main: "#c084fc" },   // your dark accent
+        secondary: { main: "#9ca3af" }, // neutral
+
+        background: {
+          default: "#14151b",
+          paper: "#1f2028",
+        },        
+
+        text: {
+          primary: "rgba(255,255,255,0.90)",
+          secondary: "rgba(255,255,255,0.72)",
+        },
+
+        divider: "rgba(255,255,255,0.14)",
+
+        error: {
+          main: "#ff6b6b",
+          light: "rgba(255,107,107,0.15)",
+          dark: "#c62828",
+        },
+      },
     },
   },
+
 
   /* =========================================================
      TYPOGRAPHY
@@ -20,9 +66,12 @@ export const muiTheme = createTheme({
   typography: {
     fontFamily: "system-ui, Segoe UI, Roboto, sans-serif",
 
-    // Only override button text
+    h6: {
+      fontWeight: 600,
+    },
+  
     button: {
-      textTransform: "none", // remove MUI uppercase
+      textTransform: "none",
       fontWeight: 500,
     },
   },
@@ -58,7 +107,6 @@ export const muiTheme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          padding: "30px",
           backgroundColor: "background.paper",
           boxShadow:
             "rgba(0, 0, 0, 0.08) 0px 8px 16px -4px"
@@ -74,6 +122,13 @@ export const muiTheme = createTheme({
           backgroundColor: "background.paper",
         },
       },
-    },  
+    }, 
+    MuiCardContent: {
+      styleOverrides: {
+        root: {
+          color: "var(--mui-palette-text-primary)",
+        },
+      },
+    },
   },
 });

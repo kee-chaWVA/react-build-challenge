@@ -10,6 +10,7 @@ import AboutPage from './pages/AboutPage'
 import ContactUsPage from './pages/ContactUsPage'
 import ProtectedLayout from './routes/ProtectedLayout'
 import PokemonPage from './pages/PokemonPage'
+import { ThemeModeToggle } from './components/ThemeModeToggle'
 
 export default function App() {
   return (
@@ -35,6 +36,15 @@ export default function App() {
           </Routes>
         </div>
       </main>
+      <footer
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          padding: '16px'
+        }}
+        >
+          <ThemeModeToggle/>
+        </footer>
     </div>
   )
 }

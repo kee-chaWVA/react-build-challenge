@@ -16,6 +16,12 @@ export default function Card({
     <MuiCard
       className={className}
       variant={variant === "outlined" ? "outlined" : "elevation"}
+      sx={{
+        height: "100%",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+      }}
     >
       {children}
     </MuiCard>

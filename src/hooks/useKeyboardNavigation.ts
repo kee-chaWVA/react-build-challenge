@@ -5,30 +5,39 @@ type KeyboardNavigationParams<T> = {
   activeIndex: number;
   setActiveIndex: React.Dispatch<React.SetStateAction<number>>;
   onSelect: (item: T) => void;
-  onEnter?: () => void;
 };
 
 export function useKeyboardNavigation<T>({
   items,
   activeIndex,
   setActiveIndex,
-  onSelect,
-  onEnter,
+  onSelect
 }: KeyboardNavigationParams<T>) {
   return useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
+    (e: React.KeyboardEvent<HTMLElement>) => {
       if (e.key === "Enter") {
-        e.preventDefault();
-
         if (activeIndex >= 0 && items[activeIndex]) {
+          e.preventDefault();
           onSelect(items[activeIndex]);
-        } else {
-          onEnter?.();
         }
-
         return;
       }
-
+      
+      if (e.key === "Escape") {
+        setActiveIndex(-1);
+        return;
+      }
+      
+      if (e.key === "Home") {
+        e.preventDefault();
+        setActiveIndex(0);
+      }
+      
+      if (e.key === "End") {
+        e.preventDefault();
+        setActiveIndex(items.length - 1);
+      }      
+      
       if (!items.length) return;
 
       if (e.key === "ArrowDown") {
@@ -45,6 +54,6 @@ export function useKeyboardNavigation<T>({
         );
       }
     },
-    [items, activeIndex, setActiveIndex, onSelect, onEnter]
+    [items, activeIndex, setActiveIndex, onSelect]
   );
 }
