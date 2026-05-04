@@ -4,6 +4,7 @@ import { capitalize } from "../shared/utils/stringUtils";
 import { useTypingEffect } from "../hooks/useTypingEffect";
 import Button from "../components/Button";
 import "../styles/PokedexDisplay.css";
+import { useQuery } from "@tanstack/react-query"
 
 type PokedexDisplayProps = {
   pokemon: any;
@@ -16,20 +17,75 @@ export default function PokedexDisplay({
   isOpen,
   onClose,
 }: PokedexDisplayProps) {
-  /* ------------------------------
-     Typing data
-  ------------------------------ */
+  const pokemonName: string | undefined = pokemon?.name;
+  const { data: species } = useQuery({
+    queryKey: ["pokemon-species",pokemonName],
+    queryFn: () =>
+      fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemonName}`)
+        .then(res => res.json()),
+    enabled: !!pokemon,
+  });
+  
+  const genus =
+    species?.genera?.find(
+      (g: { genus: string; language: { name: string } }) =>
+        g.language.name === "en"
+    )?.genus ?? "Unknown"
+
+  const flavorText =
+    species?.flavor_text_entries?.find(
+      (e: {
+        flavor_text: string;
+        language: { name: string };
+      }) => e.language.name === "en"
+    )?.flavor_text
+      // cleanup formatting from API
+      .replace(/\f/g, " ")
+      .replace(/\n/g, " ")
+      ?? "No Pokédex entry available.";
+
+  const statLines = pokemon?.stats.map(
+    (s: any) => `${capitalize(s.stat.name)}: ${s.base_stat}`
+  );
+
+  const levelUpMoves = pokemon?.moves?.filter((m: any) =>
+    m.version_group_details?.some(
+      (d: any) => d.move_learn_method.name === "level-up"
+    )
+  )
+  .slice(0, 5)
+  .map((m: any) => `• ${capitalize(m.move.name)}`);
+
+  
+  const tmMoves = pokemon?.moves?.filter((m: any) =>
+      m.version_group_details?.some(
+        (d: any) => d.move_learn_method.name === "machine"
+      )
+    )
+    .slice(0, 6)
+    .map((m: any) => `• ${capitalize(m.move.name)}`);  
+  
   const lines = pokemon
     ? [
+        `ID: ${pokemon.id}`,
+        `Species: ${genus}`,
+        `Habitat: ${capitalize(species?.habitat?.name)}`,
         `Name: ${capitalize(pokemon.name)}`,
         `Types: ${pokemon.types
           .map((t: any) => capitalize(t.type.name))
           .join(", ")}`,
         `Height: ${pokemon.height / 10} m`,
         `Weight: ${pokemon.weight / 10} kg`,
+        `Base EXP: ${pokemon.base_experience}`,
+        ...statLines,
         `Abilities: ${pokemon.abilities
           .map((a: any) => capitalize(a.ability.name))
           .join(", ")}`,
+        "Moves (Level‑Up):",
+        ...levelUpMoves,
+        'Optional Moves (Taught):',
+        ...tmMoves,
+        `Entry: ${flavorText}`
       ]
     : [];
 
@@ -61,9 +117,6 @@ export default function PokedexDisplay({
     };
   }, [isOpen, pokemon?.cries?.latest]);
 
-  /* ------------------------------
-     Render
-  ------------------------------ */
   return (
     <aside className={`pokedex ${isOpen ? "open" : ""}`} aria-hidden={!isOpen}>
       <header className="pokedex-header">

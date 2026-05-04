@@ -101,11 +101,16 @@ export default function WhosThatPokemonModal({
       >
         <header className="wtp-header">
           <h2 className="wtp-title">
-            {revealed ? normalizName(correctPokemon.name) : "Who's that Pokémon?"}
+            {!revealed && "Who's that Pokémon?"}
           </h2>
           <button className="wtp-close" onClick={onClose}>✕</button>
         </header>
         <div className="wtp-stage">
+          {revealed && (
+            <div className="reveal-title">
+              {normalizName(correctPokemon.name)}
+            </div>
+          )}
           {!revealed && (
             <img
               src="/pokemon-question-mark.png"
