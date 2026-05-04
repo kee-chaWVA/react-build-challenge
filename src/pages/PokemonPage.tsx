@@ -10,12 +10,15 @@ import '../styles/SearchControl.css'
 import '../styles/PokemonPage.css'
 import SearchControl from "../components/SearchControl";
 import PokedexDisplay from "../components/PokedexDisplay";
+import WhosThatPokemonModal from "../components/WhosThatPokemonModal"
 
 export default function PokemonPage() {
   const [ searchWord, setSearchWord ] = useState<string>('');
   const [ committedSearch, setCommittedSearch ] = useState<string>('')
   const [ activeSuggestion, setActiveSuggestion ] = useState<number>(-1)
   const [isPokedexOpen, setIsPokedexOpen] = useState(false);
+  const [ isGameOpen, setIsGameOpen ] = useState(false)
+  const [gameKey, setGameKey] = useState(0)
   
   const { data: listData } = useQuery({
     queryKey: ["pokemonList"],
@@ -78,6 +81,9 @@ export default function PokemonPage() {
   if (error) {
     return <p>Something went wrong</p>
   }
+  
+  const handleIncorrectGuess = (_pokemonName: string) => {
+  };
 
   return (
     <main aria-labelledby="pokemon-heading" className="pokemon-page">
@@ -107,6 +113,21 @@ export default function PokemonPage() {
         isOpen={isPokedexOpen}
         onClose={() => setIsPokedexOpen(false)}
       />
+      {isGameOpen && listData?.results && (
+        <WhosThatPokemonModal
+          key={gameKey}
+          allPokemon={listData?.results}
+          onIncorrectGuess={handleIncorrectGuess}
+          onClose={() => setIsGameOpen(false)}
+          onPlayAgain={() => setGameKey(k => k + 1)}
+        />
+      )}
+      <Button
+        variant="secondary"
+        onClick={() => setIsGameOpen(true)}
+      >
+        🎮 Play game
+      </Button>
     </main>
   )
 }
