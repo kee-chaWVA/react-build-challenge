@@ -1,3 +1,9 @@
+@font-face {
+  font-family: 'pokemon-solid';
+  src: url('/fonts/pokemon-solid.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 .pokemon-page {
   min-height: 100%;
   background-color: var(--mui-palette-background-default);
@@ -7,4 +13,69 @@
 
 .pokemon-header {
   text-align: center;
+}
+
+.enter-button {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: button-enter 520ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Staggered delays */
+.enter-delay-1 {
+  animation-delay: 120ms;
+}
+
+.enter-delay-2 {
+  animation-delay: 220ms;
+}
+
+@keyframes button-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .enter-button {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.pokemon-page-button-wrapper {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.pokemon-page-button-wrapper>button,
+.pokemon-page-button-wrapper>.button {
+  width: 180px;
+}
+
+.pokemon-header h1 {
+  font-family: 'pokemon-solid' !important;
+  color: #ffcb05;
+  text-shadow:
+      -3px -3px 0 #2a75bb,
+      0px -3px 0 #2a75bb,
+      3px -3px 0 #2a75bb,
+      -3px 0px 0 #2a75bb,
+      3px 0px 0 #2a75bb,
+      -3px 3px 0 #2a75bb,
+      0px 3px 0 #2a75bb,
+      3px 3px 0 #2a75bb;
 }

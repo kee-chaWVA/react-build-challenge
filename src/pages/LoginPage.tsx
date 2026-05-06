@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { users } from "../data/users";
 import Card from "../components/Card";
 import Grid from "@mui/material/Grid";
+import '../styles/LoginPage.css'
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -33,7 +34,7 @@ export default function LoginPage() {
 
   return (
     <div className="login-page">
-      <Card variant="outlined">
+      <Card variant="outlined" className="login-card">
         <h2 className="page-title">Log In</h2>
 
         <form onSubmit={handleLogin}>

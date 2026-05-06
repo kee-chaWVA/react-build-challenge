@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useRef } from "react"
 import { useQuery } from "@tanstack/react-query"
 import Button from "../components/Button"
 import { fetchPokemon, fetchPokemonList } from "../queries/pokemonApi"
@@ -16,9 +16,11 @@ export default function PokemonPage() {
   const [ searchWord, setSearchWord ] = useState<string>('');
   const [ committedSearch, setCommittedSearch ] = useState<string>('')
   const [ activeSuggestion, setActiveSuggestion ] = useState<number>(-1)
-  const [isPokedexOpen, setIsPokedexOpen] = useState(false);
+  const [ isPokedexOpen, setIsPokedexOpen ] = useState(false);
   const [ isGameOpen, setIsGameOpen ] = useState(false)
-  const [gameKey, setGameKey] = useState(0)
+  const [ gameKey, setGameKey ] = useState(0)
+  const [ isSearchOpen, setIsSearchOpen ] = useState(false)
+  const gameAudioRef = useRef<HTMLAudioElement | null>(null);
   
   const { data: listData } = useQuery({
     queryKey: ["pokemonList"],
@@ -73,6 +75,22 @@ export default function PokemonPage() {
       handleSearch();
     }
   };
+
+  const handleGame = () => {
+    const audioEl = gameAudioRef.current;
+    if (!audioEl) return;
+  
+    audioEl.pause();
+    audioEl.currentTime = 0;
+    audioEl.volume = 0.4;
+  
+    if (!isGameOpen) {
+      audioEl.play().catch(() => {});
+    }
+    
+    setIsSearchOpen(false);
+    setIsGameOpen(true);
+  };  
   
   if (isLoading) {
     return <p>Loading…</p>
@@ -88,25 +106,44 @@ export default function PokemonPage() {
   return (
     <main aria-labelledby="pokemon-heading" className="pokemon-page">
       <header className="pokemon-header">
-        <h1 id="pokemon-heading">Pokémon Encyclopedia</h1>
-        <SearchControl<PokemonListItem>
-          label="Search Pokémon"
-          inputId="pokemon-search-bar"
-          listboxId="pokemon-suggestion-list"
-          value={searchWord}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-          items={suggestions}
-          activeIndex={activeSuggestion}
-          getOptionId={(pokemon) => `pokemon-option-${pokemon.name}`}
-          renderOption={(pokemon) => capitalize(pokemon.name)}
-          onSelect={(pokemon) => handleSearch(pokemon.name)}
-          action={
-            <Button onClick={handleButtonClick}>
-              Search Pokémon
-            </Button>
-          }
-        />
+        <h1 id="pokemon-heading">All Things Pokémon</h1>
+        <div className="pokemon-page-button-wrapper">
+          <Button 
+            type="button"
+            variant="primary"
+            onClick={() => setIsSearchOpen(true)}
+            className="enter-button enter-delay-1"
+          >
+            Pokémon Search
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={handleGame}
+            className="enter-button enter-delay-2"
+          >
+            🎮 Play game
+          </Button>
+        </div>
+        {isSearchOpen && (
+          <SearchControl<PokemonListItem>
+            label="Search Pokémon"
+            inputId="pokemon-search-bar"
+            listboxId="pokemon-suggestion-list"
+            value={searchWord}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            items={suggestions}
+            activeIndex={activeSuggestion}
+            getOptionId={(pokemon) => `pokemon-option-${pokemon.name}`}
+            renderOption={(pokemon) => capitalize(pokemon.name)}
+            onSelect={(pokemon) => handleSearch(pokemon.name)}
+            action={
+              <Button onClick={handleButtonClick}>
+                Search Pokémon
+              </Button>
+            }
+          />
+        )}
       </header>
       <PokedexDisplay
         pokemon={data}
@@ -118,16 +155,17 @@ export default function PokemonPage() {
           key={gameKey}
           allPokemon={listData?.results}
           onIncorrectGuess={handleIncorrectGuess}
-          onClose={() => setIsGameOpen(false)}
+          onClose={() => {
+            gameAudioRef.current?.pause();
+            gameAudioRef.current!.currentTime = 0;
+            setIsGameOpen(false);   
+          }}
           onPlayAgain={() => setGameKey(k => k + 1)}
         />
       )}
-      <Button
-        variant="secondary"
-        onClick={() => setIsGameOpen(true)}
-      >
-        🎮 Play game
-      </Button>
+      <audio ref={gameAudioRef} preload="auto">
+        <source src="/audio/wtp-soundclip.mp3" type="audio/mpeg" />
+      </audio>
     </main>
   )
 }

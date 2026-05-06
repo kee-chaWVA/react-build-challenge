@@ -36,23 +36,6 @@ export default function WhosThatPokemonModal({
   const [revealed, setRevealed] = useState(false);
   const [shakeKey, setShakeKey] = useState(0);
 
-  // Start theme when modal mounts
-
-  useEffect(() => {
-    const audio = new Audio("/audio/wtp-soundclip.mp3");
-    audio.volume = 0.4;
-    audio
-      .play()
-      .catch(() => {
-      });
-    audioRef.current = audio;
-    return () => {
-      audio.pause();
-      audio.currentTime = 0;
-      audioRef.current = null;
-    };
-  }, []);
-
   const feedbackTimeoutRef = useRef<number | null>(null);
   
   const getImageUrl = (pokemon: PokemonListItem): string | undefined => {

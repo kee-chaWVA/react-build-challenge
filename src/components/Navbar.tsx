@@ -114,7 +114,7 @@ export default function Navbar() {
 
           {isAuthenticated ? (
             <>
-              <li><NavItem to="/pokemon">Pokémon Encyclopedia</NavItem></li>
+              <li><NavItem to="/pokemon">PokéWorld</NavItem></li>
               <li><NavItem to="/search">Movie Library</NavItem></li>
               <li><NavItem to="/quotes">Quotes</NavItem></li>
               <li>

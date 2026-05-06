@@ -1,0 +1,106 @@
+/* QuotesPage.css */
+
+.quotes-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+.quotes-page header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.quotes-page h1 {
+  font-size: 2rem;
+  margin: 0;
+}
+
+.quotes-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.add-quote-form {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.add-quote-form input {
+  min-width: 240px;
+  padding: 8px 10px;
+  font-size: 1rem;
+}
+
+.quote-card blockquote {
+  margin: 0;
+  padding: 24px;
+  text-align: center;
+}
+
+.quote-card p {
+  font-size: 1.25rem;
+  font-style: italic;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.quote-empty {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  margin-top: 24px;
+}
+
+.quote-card {
+  position: relative;
+}
+
+.MuiIconButton-root.random-quotes-close {
+  position: absolute;
+  top: 0;
+  right: 8px;
+  padding: 4px;
+  color: inherit;
+  background: none;
+}
+
+.MuiIconButton-root.random-quotes-close:hover,
+.MuiIconButton-root.random-quotes-close:focus-visible {
+  background-color: transparent;
+}
+
+@media (max-width: 480px) {
+  .quotes-actions {
+    flex-direction: column;
+  }
+
+  .add-quote-form {
+    flex-direction: column;
+  }
+
+  .add-quote-form input {
+    width: 100%;
+  }
+}
+
+.quote-card {
+  animation: quote-fade-in 220ms ease-out;
+}
+
+@keyframes quote-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
