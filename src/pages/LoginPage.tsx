@@ -15,7 +15,7 @@ export default function LoginPage() {
   const [userPw, setUserPw] = useState("");
   const [error, setError] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = (e: React.SubmitEvent) => {
     e.preventDefault();
 
     const foundUser = users.find(

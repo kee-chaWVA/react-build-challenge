@@ -51,7 +51,7 @@ export default function QuotesPage() {
       </header>
       <section className="quotes-actions">
         <Button onClick={showRandomQuote} disabled={showInput}>Show Quote of the Day</Button>
-        <Button variant='secondary' onClick={() => setShowInput(true)} disabled={activeQuote}>Add a Quote</Button>
+        <Button variant='secondary' onClick={() => setShowInput(true)} disabled={!!activeQuote}>Add a Quote</Button>
       </section>
       {showInput && (
         <section>

@@ -1,16 +1,16 @@
 import { useState, useMemo, useRef } from "react"
 import { useQuery } from "@tanstack/react-query"
-import Button from "../components/Button"
 import { fetchPokemon, fetchPokemonList } from "../queries/pokemonApi"
 import type { PokemonListItem } from "../queries/pokemonApi"
 import { capitalize } from "../shared/utils/stringUtils"
-import Fuse from 'fuse.js'
 import { useKeyboardNavigation } from "../hooks/useKeyboardNavigation"
-import '../styles/SearchControl.css'
-import '../styles/PokemonPage.css'
+import Button from "../components/Button"
 import SearchControl from "../components/SearchControl";
 import PokedexDisplay from "../components/PokedexDisplay";
 import WhosThatPokemonModal from "../components/WhosThatPokemonModal"
+import Fuse from 'fuse.js'
+import '../styles/SearchControl.css'
+import '../styles/PokemonPage.css'
 
 export default function PokemonPage() {
   const [ searchWord, setSearchWord ] = useState<string>('');
