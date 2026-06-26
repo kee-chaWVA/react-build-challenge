@@ -6,13 +6,19 @@ import Card from '../components/Card'
 import '../styles/QuotesPage.css'
 import type { SubmitEvent } from 'react'
 import IconButton from "@mui/material/IconButton";
+import type { QuotesResponse } from '../types/api/QuotesResponse'
+import { useMutation } from '@tanstack/react-query'
+import axios from 'axios'
+import { useAuth } from '../auth/AuthContext'
+import FlashMessage from '../components/FlashMessage';
 
 export default function QuotesPage() {
   const [quotes, setQuotes] = useState<Quote[]>(initialQuotes)
   const [activeQuote, setActiveQuote] = useState<Quote | null>(null)
   const [showInput, setShowInput] = useState<boolean>(false)
   const [newQuote, setNewQuote] = useState<string>('')
-
+  const [error, setError] = useState<string>('')
+  const {user} = useAuth()
   const showRandomQuote = () => {
     if(!quotes.length)return;
     setShowInput(false)
@@ -25,17 +31,36 @@ export default function QuotesPage() {
     setActiveQuote(quotes[randomIndex])
   }
 
+  const mutation = useMutation<QuotesResponse, Error, string>({
+    mutationFn: async (quoteText) => {
+      const res = await axios.post<QuotesResponse>(
+         "https://jsonplaceholder.typicode.com/posts",
+         {
+          body: quoteText,
+          userId: user?.id
+        }
+      );
+      return res.data;
+    },
+    onSuccess: (data) => {
+      const newQuote = {
+        id: data.id,
+        quote: data.body
+      };  
+      setQuotes((prev) => [newQuote, ...prev]);
+      setActiveQuote(newQuote);
+      setNewQuote('');
+      setShowInput(false);
+    },
+    onError: (error) => {
+      setError(error.message);
+    }
+  })
+
   const handleSubmit = (e: SubmitEvent) => {
     e.preventDefault()
     if(!newQuote.trim()) return;
-    const quote: Quote = {
-      id: quotes.length ? Math.max(...quotes.map(q => q.id)) + 1 : 1,
-      quote: newQuote.trim()
-    };
-    setQuotes((prev) =>[quote, ...prev]);
-    setActiveQuote(quote)
-    setNewQuote('')
-    setShowInput(false)
+    mutation.mutate(newQuote.trim());
   }
 
   const onClose = () => {
@@ -48,6 +73,14 @@ export default function QuotesPage() {
     <main aria-labelledby="quotes-heading" className='quotes-page'>
       <header className='quotes-header'>
         <h1 id="quotes-heading">Quotes</h1>
+        {error && (
+          <FlashMessage
+            message={error}
+            autoHideDuration={3000}
+            onClose={() => setError("")}
+            className="flash-overlay"
+          />
+        )}
       </header>
       <section className="quotes-actions">
         <Button onClick={showRandomQuote} disabled={showInput}>Show Quote of the Day</Button>
