@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getToken } from "../auth/token";
 import { AUTH_LOGOUT_EVENT } from "../auth/event";
 
 export const api = axios.create({
