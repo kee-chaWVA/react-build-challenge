@@ -17,13 +17,13 @@ export default function PokedexDisplay({
   isOpen,
   onClose,
 }: PokedexDisplayProps) {
-  const pokemonName: string | undefined = pokemon?.name;
+  const speciesUrl = pokemon?.species?.url;
   const { data: species } = useQuery({
-    queryKey: ["pokemon-species",pokemonName],
+    queryKey: ["pokemon-species",speciesUrl],
     queryFn: () =>
-      fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemonName}`)
+      fetch(speciesUrl)
         .then(res => res.json()),
-    enabled: !!pokemon,
+    enabled: !!speciesUrl,
   });
   
   const genus =
