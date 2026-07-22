@@ -1,8 +1,10 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import type { ReactNode } from 'react'
 import type { User } from '../types/user'
-import { SESSION_KEY } from './session'
+import { clearSession, getSession, storeSession } from './session'
 import { users } from '../data/users'
+import { clearToken, storeToken, createToken } from './token'
+import { AUTH_LOGOUT_EVENT } from './event'
 
 type AuthContextType = {
   isAuthenticated: boolean,
@@ -23,7 +25,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [ isInitialized, setIsInitialized ] = useState<boolean>(false)
   
   useEffect(() => {
-    const sessionId = localStorage.getItem(SESSION_KEY)
+    const sessionId = getSession()
     
     if (sessionId) {
       const existingUser = users.find(
@@ -37,15 +39,34 @@ export function AuthProvider({ children }: AuthProviderProps) {
   
     setIsInitialized(true)
   }, [])
+
+  useEffect(() => {
+    const handleLogout = () => {
+      logout()
+    }
+    window.addEventListener(
+      AUTH_LOGOUT_EVENT,
+      handleLogout
+    )
+    return () => {
+      window.removeEventListener(
+        AUTH_LOGOUT_EVENT,
+        handleLogout
+      )
+    }
+  }, [])
   
   const login = (user: User) => {
+    const token = createToken()
     setUser(user)
-    localStorage.setItem(SESSION_KEY, String(user.id))
+    storeSession(String(user.id))
+    storeToken(token)
   }
 
   const logout = () => {
     setUser(null)
-    localStorage.removeItem(SESSION_KEY)
+    clearSession()
+    clearToken()
   }
 
   return (

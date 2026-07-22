@@ -1,4 +1,4 @@
-import axios from "axios"
+import { api } from "../api/client";
 
 export type PokemonListItem = {
   name: string
