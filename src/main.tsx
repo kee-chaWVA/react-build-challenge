@@ -9,7 +9,16 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import { muiTheme } from "./styles/muiTheme";
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 1000 * 60,
+        retry: 3,
+        refetchOnReconnect: true
+      }
+    }
+  }
+)
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

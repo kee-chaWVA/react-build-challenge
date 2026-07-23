@@ -24,6 +24,8 @@ export default function PokedexDisplay({
       fetch(speciesUrl)
         .then(res => res.json()),
     enabled: !!speciesUrl,
+    staleTime: 1000 * 60 * 5,
+    retry: 5,
   });
   
   const genus =

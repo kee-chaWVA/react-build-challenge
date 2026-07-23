@@ -1,24 +1,30 @@
 import { useState } from 'react'
 import type { Quote } from '../types/quote'
-import { quotes as initialQuotes } from '../data/quotes'
 import Button from '../components/Button'
 import Card from '../components/Card'
 import '../styles/QuotesPage.css'
 import type { SubmitEvent } from 'react'
 import IconButton from "@mui/material/IconButton";
 import type { QuotesResponse } from '../types/api/QuotesResponse'
-import { useMutation } from '@tanstack/react-query'
-import axios from 'axios'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../auth/AuthContext'
 import FlashMessage from '../components/FlashMessage';
+import { api } from '../api/client'
+import { getQuotes, addQuote } from '../data/quotesDb'
 
 export default function QuotesPage() {
-  const [quotes, setQuotes] = useState<Quote[]>(initialQuotes)
   const [activeQuote, setActiveQuote] = useState<Quote | null>(null)
   const [showInput, setShowInput] = useState<boolean>(false)
   const [newQuote, setNewQuote] = useState<string>('')
   const [error, setError] = useState<string>('')
   const {user} = useAuth()
+  const queryClient = useQueryClient();
+
+  const {data: quotes = []} = useQuery({
+    queryKey: ["quotes"],
+    queryFn: async () => getQuotes(),
+  })
+
   const showRandomQuote = () => {
     if(!quotes.length)return;
     setShowInput(false)
@@ -33,7 +39,7 @@ export default function QuotesPage() {
 
   const mutation = useMutation<QuotesResponse, Error, string>({
     mutationFn: async (quoteText) => {
-      const res = await axios.post<QuotesResponse>(
+      const res = await api.post<QuotesResponse>(
          "https://jsonplaceholder.typicode.com/posts",
          {
           body: quoteText,
@@ -42,12 +48,17 @@ export default function QuotesPage() {
       );
       return res.data;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       const newQuote = {
         id: data.id,
         quote: data.body
       };  
-      setQuotes((prev) => [newQuote, ...prev]);
+      await addQuote(newQuote);
+
+      queryClient.invalidateQueries({
+        queryKey: ["quotes"]
+      });
+
       setActiveQuote(newQuote);
       setNewQuote('');
       setShowInput(false);
