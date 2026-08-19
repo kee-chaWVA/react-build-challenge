@@ -7,10 +7,13 @@ build:
 # Run the container (dev mode)
 run:
 	podman run --rm -it \
+		--name react-build-challenge \
 		-p 5173:5173 \
 		-v $$(pwd):/app:Z \
 		-v /app/node_modules \
 		$(IMAGE)
 
 # Build + run (one command)
-dev: build run
+rebuild: build run
+
+dev: run
