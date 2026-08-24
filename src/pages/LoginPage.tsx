@@ -1,19 +1,22 @@
 import { useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import Button from "../components/Button";
-import { useNavigate } from "react-router-dom";
 import { users } from "../data/users";
 import Card from "../components/Card";
 import Grid from "@mui/material/Grid";
+import Modal from "../components/Modal";
+import OtpForm from "../components/OtpForm";
 import '../styles/LoginPage.css'
+import { getOrCreateSecret, getAuthenticatorUri } from "../services/totpService"
 
 export default function LoginPage() {
   const { login } = useAuth();
-  const navigate = useNavigate();
 
   const [userNameInput, setUserNameInput] = useState("");
   const [userPw, setUserPw] = useState("");
   const [error, setError] = useState("");
+  const [isOtpOpen, setIsOtpOpen] = useState(false);
+``
 
   const handleLogin = (e: React.SubmitEvent) => {
     e.preventDefault();
@@ -29,7 +32,7 @@ export default function LoginPage() {
 
     setError("");
     login(foundUser);
-    navigate("/");
+    setIsOtpOpen(true);
   };
 
   return (
@@ -98,6 +101,15 @@ export default function LoginPage() {
           </Grid>
         </form>
       </Card>
+      <Modal
+        open={isOtpOpen}
+        title="Two Factor Authentication"
+        onClose={() => setIsOtpOpen(false)}
+        >
+          <OtpForm
+            onSuccess={() => setIsOtpOpen(false)}
+          />
+        </Modal>
     </div>
   );
 }

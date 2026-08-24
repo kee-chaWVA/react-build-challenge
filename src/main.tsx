@@ -8,6 +8,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import { muiTheme } from "./styles/muiTheme";
+import { Provider } from 'react-redux';
+import { store } from './app/store'
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -22,19 +24,21 @@ const queryClient = new QueryClient({
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ThemeProvider theme={muiTheme}>
-      <CssBaseline/>
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <AuthProvider>
-            <App />
-          </AuthProvider>
-        </BrowserRouter>
-        <ReactQueryDevtools
-          initialIsOpen={false}
-          position="bottom"
-        />
-      </QueryClientProvider>
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider theme={muiTheme}>
+        <CssBaseline/>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <AuthProvider>
+              <App />
+            </AuthProvider>
+          </BrowserRouter>
+          <ReactQueryDevtools
+            initialIsOpen={false}
+            position="bottom"
+          />
+        </QueryClientProvider>
+      </ThemeProvider>
+    </Provider>
   </StrictMode>,
 )

@@ -5,6 +5,8 @@ import { clearSession, getSession, storeSession } from './session'
 import { users } from '../data/users'
 import { clearToken, storeToken, createToken } from './token'
 import { AUTH_LOGOUT_EVENT } from './event'
+import { useDispatch } from "react-redux";
+import { resetTwoFactor } from "../features/security/securitySlice";
 
 type AuthContextType = {
   isAuthenticated: boolean,
@@ -23,6 +25,7 @@ type AuthProviderProps = {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [ user, setUser ] = useState<User | null >(null)
   const [ isInitialized, setIsInitialized ] = useState<boolean>(false)
+  const dispatch = useDispatch();
   
   useEffect(() => {
     const sessionId = getSession()
@@ -67,6 +70,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setUser(null)
     clearSession()
     clearToken()
+    dispatch(resetTwoFactor());
   }
 
   return (

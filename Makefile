@@ -17,3 +17,6 @@ run:
 rebuild: build run
 
 dev: run
+
+bash:
+	podman exec -it react-build-challenge bash

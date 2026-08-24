@@ -4,6 +4,8 @@ import Button from "./Button";
 import NavItem from "./NavItem";
 import { styled } from "@mui/material/styles";
 import { useLayoutEffect, useRef } from "react";
+import { useSelector } from "react-redux";
+import type { RootState } from "../app/store";
 import "../styles/Navbar.css";
 
 const NavbarRoot = styled("header")(({ theme }) => {
@@ -29,6 +31,10 @@ export default function Navbar() {
     logout();
     navigate("/", { replace: true });
   };
+
+  const isTwoFactorVerified = useSelector(
+    (state: RootState) => state.security.isTwoFactorVerified
+  );
   
   useLayoutEffect(() => {
     if (!isInitialized) return;
@@ -112,7 +118,7 @@ export default function Navbar() {
           <li><NavItem to="/about">About Us</NavItem></li>
           <li><NavItem to="/contact-us">Contact</NavItem></li>
 
-          {isAuthenticated ? (
+          {isAuthenticated && isTwoFactorVerified ? (
             <>
               <li><NavItem to="/pokemon">PokéWorld</NavItem></li>
               <li><NavItem to="/search">Movie Library</NavItem></li>
