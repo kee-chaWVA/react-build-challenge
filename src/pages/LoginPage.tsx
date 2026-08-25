@@ -7,7 +7,6 @@ import Grid from "@mui/material/Grid";
 import Modal from "../components/Modal";
 import OtpForm from "../components/OtpForm";
 import '../styles/LoginPage.css'
-import { getOrCreateSecret, getAuthenticatorUri } from "../services/totpService"
 
 export default function LoginPage() {
   const { login } = useAuth();

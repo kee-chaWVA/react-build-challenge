@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from "react"
+import { useRef, useState } from "react"
 import type { PokemonListItem } from "../queries/pokemonApi"
 import Button from "./Button"
 import '../styles/WhosThatPokemonModal.css'
@@ -17,7 +17,6 @@ export default function WhosThatPokemonModal({
   onClose,
   onPlayAgain
 }: WhosThatPokemonModalProps) {
-  const audioRef = useRef<HTMLAudioElement | null>(null)
   const initCorrectPokemon = () => {
     const index = Math.floor(Math.random() * allPokemon.length)
     return allPokemon[index]

@@ -1,8 +1,16 @@
-FROM node:20
+FROM node:20-alpine AS build
 
 WORKDIR /app
 
-EXPOSE 5173
-ENV CHOKIDAR_USEPOLLING=true
+COPY package*.json ./
+RUN npm install
 
-CMD ["sh", "-c", "npm install && npm run dev -- --host 0.0.0.0"]
+COPY . .
+
+RUN npm run build
+
+FROM nginx:alpine
+
+COPY --from=build /app/dist /usr/share/nginx/html
+
+EXPOSE 80
