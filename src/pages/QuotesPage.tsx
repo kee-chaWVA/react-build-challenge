@@ -10,7 +10,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../auth/AuthContext'
 import FlashMessage from '../components/FlashMessage';
 import { api } from '../api/client'
-import { getQuotes, addQuote } from '../data/quotesDb'
+import { getAll, addRecord, STORES } from '../data/appDb'
 
 export default function QuotesPage() {
   const [activeQuote, setActiveQuote] = useState<Quote | null>(null)
@@ -22,7 +22,7 @@ export default function QuotesPage() {
 
   const {data: quotes = []} = useQuery({
     queryKey: ["quotes"],
-    queryFn: async () => getQuotes(),
+    queryFn: async () => getAll<Quote>(STORES.QUOTES),
   })
 
   const showRandomQuote = () => {
@@ -53,7 +53,7 @@ export default function QuotesPage() {
         id: data.id,
         quote: data.body
       };  
-      await addQuote(newQuote);
+      await addRecord(STORES.QUOTES, newQuote);
 
       queryClient.invalidateQueries({
         queryKey: ["quotes"]

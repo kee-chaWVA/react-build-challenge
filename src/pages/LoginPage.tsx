@@ -1,38 +1,72 @@
 import { useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import Button from "../components/Button";
-import { users } from "../data/users";
 import Card from "../components/Card";
 import Grid from "@mui/material/Grid";
 import Modal from "../components/Modal";
 import OtpForm from "../components/OtpForm";
 import '../styles/LoginPage.css'
+import '../styles/form.css'
+import { isTrustedDevice } from "../services/totpService";
+import { useNavigate, Link } from "react-router-dom";
+import type { User } from "../types/user";
+import { useQuery } from "@tanstack/react-query";
+import { STORES, getAll } from "../data/appDb";
+import { verifyTwoFactor } from "../features/security/securitySlice";
+import { useDispatch } from "react-redux";
+import { hashPassword } from "../shared/utils/passwordUtils";
 
 export default function LoginPage() {
   const { login } = useAuth();
-
+  const navigate = useNavigate()
   const [userNameInput, setUserNameInput] = useState("");
   const [userPw, setUserPw] = useState("");
   const [error, setError] = useState("");
   const [isOtpOpen, setIsOtpOpen] = useState(false);
-``
+  const [pendingUser, setPendingUser] = useState<User | null>(null)
+  const dispatch = useDispatch();
 
-  const handleLogin = (e: React.SubmitEvent) => {
+  const {data: users = []} = useQuery({
+    queryKey: ['users'],
+    queryFn: () => getAll<User>(STORES.USERS)
+  })
+
+  
+  const handleLogin = async (e: React.SubmitEvent) => {
     e.preventDefault();
-
+    
+    const passwordDigest = await hashPassword(userPw)
     const foundUser = users.find(
-      (user) => user.userName === userNameInput.trim()
+      (user) => user.userName === userNameInput.trim() &&
+      user.passwordDigest === passwordDigest
     );
 
     if (!foundUser) {
-      setError("User not found!");
+      setError("Invalid username or password.");
       return;
     }
 
     setError("");
-    login(foundUser);
-    setIsOtpOpen(true);
+    if(isTrustedDevice(foundUser.userName)) {
+      login(foundUser);
+      dispatch(verifyTwoFactor())
+      navigate("/")
+    } else {
+      setPendingUser(foundUser)
+      setIsOtpOpen(true);
+    }
   };
+
+  const handleOtpSuccess = () => {
+    if (!pendingUser) return;
+
+    login(pendingUser)
+    dispatch(verifyTwoFactor());
+    setPendingUser(null)
+    setIsOtpOpen(false)
+
+    navigate("/");
+  }
 
   return (
     <div className="login-page">
@@ -44,7 +78,11 @@ export default function LoginPage() {
             {/* Error message */}
             {error && (
               <Grid size={12}>
-                <p id="login-error" aria-live="assertive">
+                <p 
+                  id="login-error"
+                  aria-live="assertive"
+                  className="form-error-message"
+                >
                   {error}
                 </p>
               </Grid>
@@ -97,16 +135,32 @@ export default function LoginPage() {
             >
               <Button type="submit">Log In</Button>
             </Grid>
+            <Grid
+              size={12}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                mt: 2
+              }}
+            >
+              <Link to="/register">
+                Create Account
+              </Link>
+            </Grid>
           </Grid>
         </form>
       </Card>
       <Modal
         open={isOtpOpen}
         title="Two Factor Authentication"
-        onClose={() => setIsOtpOpen(false)}
+        onClose={() => {
+          setPendingUser(null)
+          setIsOtpOpen(false)
+        }}
         >
           <OtpForm
-            onSuccess={() => setIsOtpOpen(false)}
+            user={pendingUser}
+            onSuccess={handleOtpSuccess}
           />
         </Modal>
     </div>
