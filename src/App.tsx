@@ -10,6 +10,7 @@ import AboutPage from './pages/AboutPage'
 import ContactUsPage from './pages/ContactUsPage'
 import ProtectedLayout from './routes/ProtectedLayout'
 import PokemonPage from './pages/PokemonPage'
+import RegisterPage from './pages/RegisterPage'
 import { ThemeModeToggle } from './components/ThemeModeToggle'
 
 export default function App() {
@@ -27,6 +28,7 @@ export default function App() {
             <Route path='/about' element={<AboutPage/>}/>
             <Route path='/contact-us' element={<ContactUsPage/>}/>
             <Route path='/login' element={<LoginPage/>}/>
+            <Route path='/register'element={<RegisterPage/>}/>
             <Route element={<ProtectedLayout/>}>
               <Route path='/pokemon' element={<PokemonPage/>}/>
               <Route path='/search' element={<SearchPage/>}/>
