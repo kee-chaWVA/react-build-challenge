@@ -33,7 +33,63 @@ describe("Button", () => {
       screen.getByRole("button", {
         name: /save/i
       })
-    )
+    );
     expect(handleClick).toHaveBeenCalledOnce();
   });
+
+  it("returns secondary if variant is secondary", () => {
+    render(
+      <Button variant="secondary">
+        Save
+      </Button>
+    );
+
+    const button = screen.getByRole("button", {
+      name: /save/i
+    });
+
+    expect(button.className).toContain("MuiButton-colorSecondary");
+  })
+
+  it("returns text if variant is text", () => {
+    render(
+      <Button variant="text">
+        Save
+      </Button>
+    );
+
+    const button = screen.getByRole("button", {
+      name: /save/i
+    });
+
+    expect(button.className).toContain("MuiButton-text");
+  })
+
+  it("returns contained if variant is not present", () => {
+    render(
+      <Button>
+        Save
+      </Button>
+    );
+
+    const button = screen.getByRole("button", {
+      name: /save/i
+    });
+
+    expect(button.className).toContain("MuiButton-contained");
+  });
+
+  it("returns primary if variant is not present", () => {
+    render(
+      <Button>
+        Save
+      </Button>
+    );
+
+    const button = screen.getByRole("button", {
+      name: /save/i
+    });
+
+    expect(button.className).toContain("MuiButton-colorPrimary");
+  })
 });
