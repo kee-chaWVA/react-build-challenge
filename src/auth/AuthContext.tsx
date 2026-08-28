@@ -2,11 +2,11 @@ import { createContext, useContext, useState, useEffect } from 'react'
 import type { ReactNode } from 'react'
 import type { User } from '../types/user'
 import { clearSession, getSession, storeSession } from './session'
-import { users } from '../data/users'
 import { clearToken, storeToken, createToken } from './token'
 import { AUTH_LOGOUT_EVENT } from './event'
 import { useDispatch } from "react-redux";
 import { resetTwoFactor } from "../features/security/securitySlice";
+import { getRecord, STORES } from '../data/appDb'
 
 type AuthContextType = {
   isAuthenticated: boolean,
@@ -28,19 +28,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const dispatch = useDispatch();
   
   useEffect(() => {
-    const sessionId = getSession()
-    
-    if (sessionId) {
-      const existingUser = users.find(
-        (u) => String(u.id) === sessionId
-      )
-  
-      if (existingUser) {
-        setUser(existingUser)
+    async function initializeAuth() {
+      const sessionId = getSession()
+      
+      if (sessionId) {
+        const existingUser = await getRecord<User>(STORES.USERS, sessionId)
+        if (existingUser) {
+          setUser(existingUser)
+        }
       }
+      setIsInitialized(true)
     }
-  
-    setIsInitialized(true)
+    initializeAuth()
   }, [])
 
   useEffect(() => {
