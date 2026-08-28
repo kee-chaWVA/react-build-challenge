@@ -32,3 +32,24 @@
   width: 200px;
   height: 200px;
 }
+
+.remember-device {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding: 1rem 0 0;
+  justify-content: center;
+}
+
+.otp-input-section {
+  display: inline-block;
+}
+
+.verify-action {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  width: auto;
+}
