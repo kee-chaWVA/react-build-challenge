@@ -90,6 +90,7 @@ export default function QuotesPage() {
             autoHideDuration={3000}
             onClose={() => setError("")}
             className="flash-overlay"
+            sx={{ mb: 2 }}
           />
         )}
       </header>

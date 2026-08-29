@@ -1,41 +1,57 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Alert from "@mui/material/Alert";
+import type { AlertColor } from "@mui/material/Alert";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close"
-
+import CloseIcon from "@mui/icons-material/Close";
+import type { SxProps, Theme } from "@mui/material/styles";
 
 type FlashMessageProps = {
   message: string;
-  severity?: "error" | "success" | "info" | "warning";
+  severity?: AlertColor;
   onClose?: () => void;
   autoHideDuration?: number;
-  className?: string
-}
+  className?: string;
+  sx?: SxProps<Theme>;
+};
 
 export default function FlashMessage({
   message,
-  severity='error',
+  severity = "error",
   onClose,
   autoHideDuration,
-  className
+  className,
+  sx,
 }: FlashMessageProps) {
-  const [open, setOpen] = useState(true)
-  
-  
+  const [open, setOpen] = useState(true);
+
+  const onCloseRef = useRef(onClose);
   useEffect(() => {
-    if (!autoHideDuration) return;
+    onCloseRef.current = onClose;
+  });
+
+  useEffect(() => {
+    setOpen(true);
+  }, [message, autoHideDuration]);
+
+  useEffect(() => {
+    if (autoHideDuration == null) return;
 
     const timer = setTimeout(() => {
       setOpen(false);
-      onClose?.();
+      onCloseRef.current?.();
     }, autoHideDuration);
 
     return () => clearTimeout(timer);
-  }, [autoHideDuration, onClose]);
+  }, [autoHideDuration]);
 
   if (!message) return null;
-  
+
+  const handleClose = () => {
+    setOpen(false);
+    onClose?.();
+  };
+
   return (
     <Collapse in={open} className={className}>
       <Alert
@@ -47,16 +63,13 @@ export default function FlashMessage({
             <IconButton
               aria-label="Close message"
               size="small"
-              onClick={() => {
-                setOpen(false);
-                onClose();
-              }}
+              onClick={handleClose}
             >
               <CloseIcon fontSize="inherit" />
             </IconButton>
           ) : undefined
         }
-        sx={{ mb: 2 }}
+        sx={sx}
       >
         {message}
       </Alert>
