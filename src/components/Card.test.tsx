@@ -55,4 +55,28 @@ describe("Card", () => {
     expect(card?.className)
       .toContain("MuiPaper-elevation");
   });
+
+  it("accepts an sx object", () => {
+    render(
+      <Card sx={{ marginTop: "40px" }}>
+        Hello
+      </Card>
+    );
+
+    expect(
+      screen.getByText("Hello")
+    ).toBeTruthy();
+  });
+
+  it("accepts an sx array", () => {
+    render(
+      <Card sx={[{ marginTop: "40px" }]}>
+        Hello
+      </Card>
+    );
+
+    expect(
+      screen.getByText("Hello")
+    ).toBeTruthy();
+  });
 })

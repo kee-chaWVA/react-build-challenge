@@ -1,27 +1,31 @@
 import type { ReactNode } from "react";
 import MuiCard from "@mui/material/Card";
+import type { CardProps as MuiCardProps } from "@mui/material/Card";
 
 type CardProps = {
   children: ReactNode;
   variant?: "default" | "outlined";
-  className?: string;
-};
+} & Omit<MuiCardProps, "variant">;
 
 export default function Card({
   children,
   variant = "default",
-  className,
+  sx,
+  ...rest
 }: CardProps) {
   return (
     <MuiCard
-      className={className}
+      {...rest}
       variant={variant === "outlined" ? "outlined" : "elevation"}
-      sx={{
-        height: "100%",
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-      }}
+      sx={[
+        {
+          height: "100%",
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+        },
+        ...(Array.isArray(sx) ? sx : [sx]),
+      ]}
     >
       {children}
     </MuiCard>

@@ -5,26 +5,21 @@ type ButtonProps = {
   variant?: "primary" | "secondary" | "text";
 } & Omit<MuiButtonProps, "variant" | "color">;
 
-function mapVariant(variant: ButtonProps["variant"]) {
-  if (variant === "text") return "text";
-  return "contained";
-}
-
-function mapColor(variant: ButtonProps["variant"]) {
-  if (variant === "secondary") return "secondary";
-  return "primary";
+const VARIANT_STYLES: Record<NonNullable<ButtonProps["variant"]>, Pick<MuiButtonProps, "variant" | "color">> = {
+  primary: {variant: "contained", color: "primary"},
+  secondary: {variant: "contained", color: "secondary"},
+  text: {variant: "text", color: "primary"}
 }
 
 export default function Button({
   children,
-  variant,
+  variant = "primary",
   ...rest
 }: ButtonProps) {
   return (
     <MuiButton
       {...rest}
-      variant={mapVariant(variant)}
-      color={mapColor(variant)}
+      {...VARIANT_STYLES[variant]}
     >
       {children}
     </MuiButton>
