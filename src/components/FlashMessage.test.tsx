@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, act } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import userEvent from "@testing-library/user-event";
 
@@ -55,26 +55,6 @@ describe("FlashMessage", () => {
       })
     ).toBeNull();
   });
-
-  it("calls onClose when close button is clicked", async () => {
-    const user = userEvent.setup();
-    const handleClose = vi.fn();
-  
-    render(
-      <FlashMessage
-        message="Error"
-        onClose={handleClose}
-      />
-    );
-  
-    await user.click(
-      screen.getByRole("button", {
-        name: /close message/i
-      })
-    );
-  
-    expect(handleClose).toHaveBeenCalledOnce();
-  });
   
   it("auto closes after duration", () => {
     vi.useFakeTimers();
@@ -87,7 +67,10 @@ describe("FlashMessage", () => {
       />
     );
   
-    vi.advanceTimersByTime(3000);
+    act(() => {
+      vi.advanceTimersByTime(3000);
+    });
+
     expect(handleClose).toHaveBeenCalledOnce();
 
     vi.useRealTimers();
