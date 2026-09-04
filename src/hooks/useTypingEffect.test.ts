@@ -1,7 +1,10 @@
 import { renderHook, act } from "@testing-library/react"
-import { describe, it, expect, vi } from "vitest"
+import { describe, it, expect, vi, afterEach } from "vitest"
 import { useTypingEffect } from "./useTypingEffect"
 
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 const lines = [
   "This",
@@ -77,5 +80,46 @@ describe("useTypingEffect", () => {
     expect(result.current.visibleLines.length).toEqual(lines.length)
     expect(result.current.currentLine).toBe("");
     expect(result.current.isDone).toBe(true);
+  })
+
+  it("does not start typing when start is false", () => {
+    vi.useFakeTimers()
+    const { result } = renderHook(() =>
+      useTypingEffect(
+        lines,
+        {
+          start: false,
+          charDelayMs: 10
+        }
+      )
+    );
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    expect(result.current.visibleLines).toEqual([]);
+    expect(result.current.currentLine).toBe("");
+    expect(result.current.isDone).toBe(false);
+  })
+
+  it("does not start if no lines present", () => {
+    vi.useFakeTimers();
+    const emptyLines: string[] = [];
+    const { result } = renderHook(() =>
+      useTypingEffect(
+        emptyLines,
+        {
+          start: true,
+          charDelayMs: 10
+        }
+      )
+    );
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    expect(result.current.visibleLines).toEqual([]);
+    expect(result.current.currentLine).toBe("");
+    expect(result.current.isDone).toBe(false);
   })
 })
