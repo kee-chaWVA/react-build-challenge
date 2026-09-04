@@ -1,5 +1,5 @@
 // src/hooks/useTypingEffect.ts
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type TypingState = {
   /** Completed lines that are fully typed */
@@ -10,21 +10,41 @@ type TypingState = {
   isDone: boolean;
 };
 
+export type UseTypingEffectOptions = {
+  charDelayMs?: number;   // speed per character
+  lineDelayMs?: number;   // pause between lines
+  start?: boolean;        // allow caller to start/stop typing
+};
+
+/**
+ * Returns a version of `lines` that keeps the same array reference across
+ * renders as long as its contents are unchanged. Callers very often rebuild
+ * `lines` inline (e.g. `useTypingEffect(pokemon ? [...] : [])`), which gives
+ * a fresh array on every render; without this, the effects below would key
+ * off that new reference and restart the whole typing animation any time
+ * the component re-renders for an unrelated reason.
+ */
+function useStableLines(lines: string[]): string[] {
+  const linesKey = JSON.stringify(lines);
+  // linesKey fully determines the memoized value, so it's the only
+  // meaningful dependency here.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return useMemo(() => lines, [linesKey]);
+}
+
 /**
  * Types out an array of lines, one character at a time.
- * Resets automatically when `lines` changes.
+ * Resets automatically when the *contents* of `lines` change.
  */
 export function useTypingEffect(
   lines: string[],
-  options?: {
-    charDelayMs?: number;   // speed per character
-    lineDelayMs?: number;   // pause between lines
-    start?: boolean;        // allow caller to start/stop typing
-  }
+  options?: UseTypingEffectOptions
 ): TypingState {
   const charDelayMs = options?.charDelayMs ?? 35;
   const lineDelayMs = options?.lineDelayMs ?? 250;
   const start = options?.start ?? true;
+
+  const stableLines = useStableLines(lines);
 
   const [visibleLines, setVisibleLines] = useState<string[]>([]);
   const [currentLine, setCurrentLine] = useState("");
@@ -47,22 +67,23 @@ export function useTypingEffect(
       window.clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
     }
-  }, [lines]);
+  }, [stableLines]);
 
   useEffect(() => {
     if (!start) return;
-    if (lines.length === 0) return;
+    if (stableLines.length === 0) return;
 
     const tick = () => {
       const lineIndex = lineIndexRef.current;
 
       // finished all lines
-      if (lineIndex >= lines.length) {
+      if (lineIndex >= stableLines.length) {
         setIsDone(true);
+        timeoutRef.current = null;
         return;
       }
 
-      const fullLine = lines[lineIndex];
+      const fullLine = stableLines[lineIndex];
       const charIndex = charIndexRef.current;
 
       // type next character
@@ -94,7 +115,7 @@ export function useTypingEffect(
         timeoutRef.current = null;
       }
     };
-  }, [start, lines, charDelayMs, lineDelayMs]);
+  }, [start, stableLines, charDelayMs, lineDelayMs]);
 
   return { visibleLines, currentLine, isDone };
 }

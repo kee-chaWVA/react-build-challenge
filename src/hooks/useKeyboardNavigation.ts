@@ -16,29 +16,31 @@ export function useKeyboardNavigation<T>({
   return useCallback(
     (e: React.KeyboardEvent<HTMLElement>) => {
       if (e.key === "Enter") {
-        if (activeIndex >= 0 && items[activeIndex]) {
+        if (activeIndex >= 0 && activeIndex < items.length) {
           e.preventDefault();
           onSelect(items[activeIndex]);
         }
         return;
       }
-      
+
       if (e.key === "Escape") {
         setActiveIndex(-1);
         return;
       }
-      
+
+      if (!items.length) return;
+
       if (e.key === "Home") {
         e.preventDefault();
         setActiveIndex(0);
+        return;
       }
-      
+
       if (e.key === "End") {
         e.preventDefault();
         setActiveIndex(items.length - 1);
-      }      
-      
-      if (!items.length) return;
+        return;
+      }
 
       if (e.key === "ArrowDown") {
         e.preventDefault();
