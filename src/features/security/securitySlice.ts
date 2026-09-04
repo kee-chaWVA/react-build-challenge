@@ -17,7 +17,6 @@ const securitySlice = createSlice({
   initialState,
   reducers: {
     verifyTwoFactor: (state) => {
-      console.log("verifyTwoFactor reducer called")
       state.isTwoFactorVerified = true
     },
     resetTwoFactor: (state) => {
