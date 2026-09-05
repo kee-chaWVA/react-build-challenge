@@ -5,6 +5,7 @@ export function getSession() {
 }
 
 export function storeSession(userId: string) {
+  if (userId.trim().length < 1) return;
   localStorage.setItem(SESSION_KEY, String(userId))
 }
 
